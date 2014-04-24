@@ -25,9 +25,9 @@ build() {
 package() {
   install -Dm644 "$srcdir/$pkgname"/dkms.conf "$pkgdir/usr/src/${_pkgbase}-${pkgver}/dkms.conf"
 
-  # Set name and version if variables were used/patched in dkms.conf
-  sed -e "s/@_PKGBASE@/${_pkgbase}/" \
-      -e "s/@PKGVER@/${pkgver}/" \
+  # ensure correct name and version in dkms.conf
+  sed -r -e "s/^(PACKAGE_NAME=).*$/\1\"${_pkgbase}\"/" \
+      -e "s/^(PACKAGE_VERSION=).*$/\1\"${pkgver}\"/" \
       -i "${pkgdir}"/usr/src/${_pkgbase}-${pkgver}/dkms.conf
 
   cp -r "$srcdir/$pkgname/module/drivers/block"/* "$pkgdir/usr/src/${_pkgbase}-${pkgver}/"
