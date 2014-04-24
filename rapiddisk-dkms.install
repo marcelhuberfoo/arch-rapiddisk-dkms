@@ -5,7 +5,7 @@ _my_pkgname=rapiddisk-dkms
 
 # arg 1:  the new package version
 post_install() {
-	local newver=${1%%-*}
+  local newver=${1%%-*}
   dkms add --force -m $_my_kmod -v $newver
   cat << EOF
 ==> To build and install your modules run: dkms install -m $_my_kmod -v $newver
@@ -17,7 +17,7 @@ EOF
 
 # arg 1:  the old package version
 pre_remove() {
-	local oldver=${1%%-*}
+  local oldver=${1%%-*}
   # Remove modules using dkms
   [ -n "$oldver" ] && dkms remove -m $_my_kmod -v $oldver --all &>/dev/null || true
 }
@@ -25,11 +25,11 @@ pre_remove() {
 # arg 1:  the new package version
 # arg 2:  the old package version
 pre_upgrade() {
-	local curver=${2%%-*}
-	# $2 might be unset due to a bug. See, https://bugs.archlinux.org/task/32278
-	# Query current version using pacman as fallback
-	[ -n "$curver" ] || curver=$(pacman -Q $_my_pkgname | cut -d' ' -f2)
-	pre_remove "$curver"
+  local curver=${2%%-*}
+  # $2 might be unset due to a bug. See, https://bugs.archlinux.org/task/32278
+  # Query current version using pacman as fallback
+  [ -n "$curver" ] || curver=$(pacman -Q $_my_pkgname | cut -d' ' -f2)
+  pre_remove "$curver"
 }
 
 # arg 1:  the new package version
