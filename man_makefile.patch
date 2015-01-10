@@ -1,0 +1,40 @@
+From 9aca0e5116033e4c033e9f1759a7b15053a848e5 Mon Sep 17 00:00:00 2001
+From: Marcel Huber <marcelhuberfoo@gmail.com>
+Date: Sat, 10 Jan 2015 22:01:34 +0100
+Subject: creating directory before copying
+
+---
+ man/Makefile | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git man/Makefile man/Makefile
+index c8e1883..9a20582 100644
+--- man/Makefile
++++ man/Makefile
+@@ -1,5 +1,7 @@
+ CP := cp
+ RM := rm
++MKDIR := mkdir -p
++MAN_DIR := /usr/share/man/man1
+ 
+ .PHONY: all
+ all: 
+@@ -8,12 +10,13 @@ all:
+ .PHONY: install
+ install: all
+ 	@echo Installing rxadm man page.
+-	$(CP) rxadm.1 $(DESTDIR)/usr/share/man/man1/
++	$(MKDIR) -m 755 $(DESTDIR)$(MAN_DIR)
++	$(CP) rxadm.1 $(DESTDIR)$(MAN_DIR)/
+ 
+ .PHONY: uninstall
+ uninstall: 
+ 	@echo Uninstalling rxadm man page.
+-	$(RM) -f $(DESTDIR)/usr/share/man/man1/rxadm.1
++	$(RM) -f $(DESTDIR)$(MAN_DIR)/rxadm.1
+ 
+ .PHONY: clean
+ clean:
+-- 
+2.2.1
+

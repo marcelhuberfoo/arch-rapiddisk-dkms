@@ -1,6 +1,6 @@
-From 33ad7c5386ccd8498ca599bb03331332cf889154 Mon Sep 17 00:00:00 2001
+From 13328986a389fa55b72b85500c9d424916e145cb Mon Sep 17 00:00:00 2001
 From: Marcel Huber <marcelhuberfoo@gmail.com>
-Date: Fri, 9 Jan 2015 23:42:03 +0100
+Date: Sat, 10 Jan 2015 22:09:31 +0100
 Subject: logo path logic patch and formatting using autopep
 
 ---
@@ -8,7 +8,7 @@ Subject: logo path logic patch and formatting using autopep
  1 file changed, 391 insertions(+), 333 deletions(-)
 
 diff --git cmd/pyRxAdm.py cmd/pyRxAdm.py
-index 6ae7ee4..ce06add 100644
+index 6ae7ee4..6964ff7 100644
 --- cmd/pyRxAdm.py
 +++ cmd/pyRxAdm.py
 @@ -6,7 +6,7 @@
@@ -678,7 +678,7 @@ index 6ae7ee4..ce06add 100644
 +        for logo_path in [os.path.join(*t) for t in itertools.product(
 +                ['/usr', '/opt', os.path.join(os.path.dirname(__file__), '..')],
 +                ['share/pixmaps', 'rxadm', 'misc'],
-+                ['rxadm.png', 'rxadm_logo_48x48.png'])]:
++                ['rxadm_logo_48x48.png'])]:
 +            if os.path.isfile(logo_path):
 +                self.window.set_icon_from_file(logo_path)
 +                break
