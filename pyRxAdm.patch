@@ -1,0 +1,780 @@
+From 33ad7c5386ccd8498ca599bb03331332cf889154 Mon Sep 17 00:00:00 2001
+From: Marcel Huber <marcelhuberfoo@gmail.com>
+Date: Fri, 9 Jan 2015 23:42:03 +0100
+Subject: logo path logic patch and formatting using autopep
+
+---
+ cmd/pyRxAdm.py | 724 +++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 391 insertions(+), 333 deletions(-)
+
+diff --git cmd/pyRxAdm.py cmd/pyRxAdm.py
+index 6ae7ee4..ce06add 100644
+--- cmd/pyRxAdm.py
++++ cmd/pyRxAdm.py
+@@ -6,7 +6,7 @@
+ # Date Created: 6 Apr, 2012                                 #
+ # Author: Petros Koutoupis <petros@petroskoutoupis.com>     #
+ #                                                           #
+-############################################################# 
++#############################################################
+ 
+ import pygtk
+ pygtk.require('2.0')
+@@ -18,7 +18,7 @@ import string
+ import sys
+ import gobject
+ 
+-summary_list = [ "No.", "Device", "Device Summary" ]
++summary_list = ["No.", "Device", "Device Summary"]
+ 
+ 
+ #####
+@@ -26,14 +26,14 @@ summary_list = [ "No.", "Device", "Device Summary" ]
+ # description: this dialog message is displayed on error
+ #
+ def error_msg(Wind, string):
+-  dia = gtk.Dialog('Message', Wind.get_toplevel(), gtk.DIALOG_MODAL)
+-  dia.add_buttons("Close", gtk.RESPONSE_CLOSE)
+-  dia.vbox.pack_start(gtk.Label(' '))
+-  dia.vbox.pack_start(gtk.Label(string))
+-  dia.vbox.pack_start(gtk.Label(' '))
+-  dia.show_all()
+-  dia.run()
+-  dia.destroy()
++    dia = gtk.Dialog('Message', Wind.get_toplevel(), gtk.DIALOG_MODAL)
++    dia.add_buttons("Close", gtk.RESPONSE_CLOSE)
++    dia.vbox.pack_start(gtk.Label(' '))
++    dia.vbox.pack_start(gtk.Label(string))
++    dia.vbox.pack_start(gtk.Label(' '))
++    dia.show_all()
++    dia.run()
++    dia.destroy()
+ 
+ 
+ #####
+@@ -42,341 +42,399 @@ def error_msg(Wind, string):
+ #
+ class pyRxAdm:
+ 
+-  def delete_event(self, widget, event, data=None):
+-    return False
+-  def destroy(self, widget, data=None):
+-    gtk.main_quit()
+-
+-  def refresh_routine(self, widget, data=None):
+-    self.mod.clear()
+-    cmd = 'rxadm --short-list'
+-    msg = commands.getoutput(cmd).splitlines()
+-    digs = re.compile(r'rxd')
+-    omit = re.compile(r'rxdsk')
+-    x = 1
+-    for line in msg:
+-      if digs.search(line) and omit.search(line) == None:
+-        val = line.split(':', 2)
+-        self.mod.append([x, val[0], val[1]]);
+-        x += 1
+-
+-    if msg[0].find("not found") != -1: 
+-      error_msg(self.window, ' Unable to locate the rxadm management utility. ')
+-
+-
+-  def add_routine(self, widget, data=None):
+-    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+-    dialog.set_markup('Enter a size in MBytes:')
+-    entry = gtk.Entry()
+-    addhb = gtk.HBox()
+-    addhb.pack_start(gtk.Label("Size:"), False, False, 0)
+-    addhb.pack_end(entry)
+-    dialog.vbox.pack_start(addhb, False, False, 0)
+-    dialog.show_all()
+-    result = dialog.run()
+-
+-    if result == gtk.RESPONSE_DELETE_EVENT:
++    def delete_event(self, widget, event, data=None):
++        return False
++
++    def destroy(self, widget, data=None):
++        gtk.main_quit()
++
++    def refresh_routine(self, widget, data=None):
++        self.mod.clear()
++        cmd = 'rxadm --short-list'
++        msg = commands.getoutput(cmd).splitlines()
++        digs = re.compile(r'rxd')
++        omit = re.compile(r'rxdsk')
++        x = 1
++        for line in msg:
++            if digs.search(line) and omit.search(line) is None:
++                val = line.split(':', 2)
++                self.mod.append([x, val[0], val[1]])
++                x += 1
++
++        if msg[0].find("not found") != -1:
++            error_msg(
++                self.window,
++                ' Unable to locate the rxadm management utility. ')
++
++    def add_routine(self, widget, data=None):
++        dialog = gtk.MessageDialog(
++            None,
++            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
++            gtk.MESSAGE_QUESTION,
++            gtk.BUTTONS_OK,
++            None)
++        dialog.set_markup('Enter a size in MBytes:')
++        entry = gtk.Entry()
++        addhb = gtk.HBox()
++        addhb.pack_start(gtk.Label("Size:"), False, False, 0)
++        addhb.pack_end(entry)
++        dialog.vbox.pack_start(addhb, False, False, 0)
++        dialog.show_all()
++        result = dialog.run()
++
++        if result == gtk.RESPONSE_DELETE_EVENT:
++            dialog.destroy()
++            return
++
++        size = entry.get_text()
++        if len(size) == 0:
++            dialog.destroy()
++            error_msg(self.window, ' There was no size specified. ')
++            return
++
++        if size.isdigit() == False:
++            dialog.destroy()
++            error_msg(self.window, ' Not a valid size entry. ')
++            return
++
++        cmd = 'rxadm --attach ' + size
++        msg = commands.getoutput(cmd)
++
+         dialog.destroy()
++        self.refresh_routine(None)
++
++    def browse_for_file(self, widget, data=None):
++        file_open = gtk.FileChooserDialog(
++            title="Select volume",
++            action=gtk.FILE_CHOOSER_ACTION_OPEN,
++            buttons=(
++                gtk.STOCK_CANCEL,
++                gtk.RESPONSE_CANCEL,
++                gtk.STOCK_OPEN,
++                gtk.RESPONSE_OK))
++        self.result = ""
++        if file_open.run() == gtk.RESPONSE_OK:
++            result = file_open.get_filename()
++            self.entry.set_text(result)
++
++        file_open.destroy()
+         return
+ 
+-    size = entry.get_text()
+-    if len(size) == 0:
+-      dialog.destroy()
+-      error_msg(self.window, ' There was no size specified. ')
+-      return
+-
+-    if size.isdigit() == False:
+-      dialog.destroy()
+-      error_msg(self.window, ' Not a valid size entry. ')
+-      return
+-
+-    cmd = 'rxadm --attach ' + size 
+-    msg = commands.getoutput(cmd)
+-
+-    dialog.destroy()
+-    self.refresh_routine(None)
+-
+-
+-  def browse_for_file(self, widget, data=None):
+-    file_open = gtk.FileChooserDialog(title="Select volume", action=gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+-    self.result = ""
+-    if file_open.run() == gtk.RESPONSE_OK:
+-      result = file_open.get_filename()
+-      self.entry.set_text(result)
+-
+-    file_open.destroy()
+-    return 
+-
+-
+-  def map_routine(self, widget, data=None):
+-    self.refresh_routine(None)
+-    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+-    dialog.set_markup('Map an rxdsk volume to a drive:')
+-    dd = gtk.combo_box_new_text()
+-    for line in self.mod:
+-      if line[1].find("rxd") != -1:
+-        dd.append_text(line[1])
+-    browse = gtk.Button("Browse...")
+-    browse.connect("clicked", self.browse_for_file, None)
+-    self.entry = gtk.Entry()
+-    self.entry.set_editable(False)
+-    rxdhb = gtk.HBox()
+-    drvhb = gtk.HBox()
+-    rxdhb.pack_start(gtk.Label("rxdsk volume: "), True, True, 0)
+-    rxdhb.pack_start(dd)
+-    drvhb.pack_start(gtk.Label("Input pathname to drive: "), False, False, 0)
+-    drvhb.pack_start(self.entry)
+-    drvhb.pack_start(browse)
+-    dialog.vbox.pack_start(rxdhb, False, False, 0)
+-    dialog.vbox.pack_start(drvhb, False, False, 0)
+-    dialog.show_all()
+-    result = dialog.run()
+-    
+-    if result == gtk.RESPONSE_DELETE_EVENT:
++    def map_routine(self, widget, data=None):
++        self.refresh_routine(None)
++        dialog = gtk.MessageDialog(
++            None,
++            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
++            gtk.MESSAGE_QUESTION,
++            gtk.BUTTONS_OK,
++            None)
++        dialog.set_markup('Map an rxdsk volume to a drive:')
++        dd = gtk.combo_box_new_text()
++        for line in self.mod:
++            if line[1].find("rxd") != -1:
++                dd.append_text(line[1])
++        browse = gtk.Button("Browse...")
++        browse.connect("clicked", self.browse_for_file, None)
++        self.entry = gtk.Entry()
++        self.entry.set_editable(False)
++        rxdhb = gtk.HBox()
++        drvhb = gtk.HBox()
++        rxdhb.pack_start(gtk.Label("rxdsk volume: "), True, True, 0)
++        rxdhb.pack_start(dd)
++        drvhb.pack_start(
++            gtk.Label("Input pathname to drive: "),
++            False,
++            False,
++            0)
++        drvhb.pack_start(self.entry)
++        drvhb.pack_start(browse)
++        dialog.vbox.pack_start(rxdhb, False, False, 0)
++        dialog.vbox.pack_start(drvhb, False, False, 0)
++        dialog.show_all()
++        result = dialog.run()
++
++        if result == gtk.RESPONSE_DELETE_EVENT:
++            dialog.destroy()
++            return
++
++        path = self.entry.get_text()
++
++        if dd.get_active() < 0:
++            dialog.destroy()
++            error_msg(self.window, ' There was no rxdsk volume selected. ')
++            return
++
++        if len(path) == 0:
++            dialog.destroy()
++            error_msg(
++                self.window,
++                ' There was no path and file name specified. ')
++            return
++
++        if path.isdigit():
++            dialog.destroy()
++            error_msg(self.window, ' Not a valid path and file entry. ')
++            return
++
++        cmd = 'rxadm --rxc-map ' + dd.get_active_text() + ' ' + path + ' 4'
++        msg = commands.getoutput(cmd)
++        # TODO: check return
++
+         dialog.destroy()
+-        return
++        self.refresh_routine(None)
++
++    def archive_routine(self, widget, data=None):
++        self.refresh_routine(None)
++        dialog = gtk.MessageDialog(
++            None,
++            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
++            gtk.MESSAGE_QUESTION,
++            gtk.BUTTONS_OK,
++            None)
++        dialog.set_markup('Select a rxdsk volume and path/file name:')
++        dd = gtk.combo_box_new_text()
++        for line in self.mod:
++            if line[1].find("rxd") != -1:
++                dd.append_text(line[1])
++        entry = gtk.Entry()
++        rxdhb = gtk.HBox()
++        archb = gtk.HBox()
++        rxdhb.pack_start(gtk.Label("rxdsk volume: "), True, True, 0)
++        rxdhb.pack_start(dd)
++        archb.pack_start(
++            gtk.Label("Input path/file name for archival: "),
++            False,
++            False,
++            0)
++        archb.pack_start(entry)
++        dialog.vbox.pack_start(rxdhb, False, False, 0)
++        dialog.vbox.pack_start(archb, False, False, 0)
++        dialog.show_all()
++        result = dialog.run()
++
++        if result == gtk.RESPONSE_DELETE_EVENT:
++            dialog.destroy()
++            return
++
++        path = entry.get_text()
++
++        if dd.get_active() < 0:
++            dialog.destroy()
++            error_msg(self.window, ' There was no rxdsk volume selected. ')
++            return
++
++        if len(path) == 0:
++            dialog.destroy()
++            error_msg(
++                self.window,
++                ' There was no path and file name specified. ')
++            return
++
++        if path.isdigit():
++            dialog.destroy()
++            error_msg(self.window, ' Not a valid path and file entry. ')
++            return
++
++        cmd = 'rxadm --archive ' + dd.get_active_text() + ' ' + path
++        msg = commands.getoutput(cmd)
++        # TODO: check return
+ 
+-    path = self.entry.get_text()
+-
+-    if dd.get_active() < 0:
+-      dialog.destroy()
+-      error_msg(self.window, ' There was no rxdsk volume selected. ')
+-      return
+-
+-    if len(path) == 0:
+-      dialog.destroy()
+-      error_msg(self.window, ' There was no path and file name specified. ')
+-      return
+-
+-    if path.isdigit() == True:
+-      dialog.destroy()
+-      error_msg(self.window, ' Not a valid path and file entry. ')
+-      return
+-
+-    cmd = 'rxadm --rxc-map ' + dd.get_active_text() + ' ' + path + ' 4'
+-    msg = commands.getoutput(cmd)
+-    #TODO: check return
+-
+-    dialog.destroy()
+-    self.refresh_routine(None)
+-
+-
+-  def archive_routine(self, widget, data=None):
+-    self.refresh_routine(None)
+-    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+-    dialog.set_markup('Select a rxdsk volume and path/file name:')
+-    dd = gtk.combo_box_new_text()
+-    for line in self.mod:
+-      if line[1].find("rxd") != -1:
+-        dd.append_text(line[1])
+-    entry = gtk.Entry()
+-    rxdhb = gtk.HBox()
+-    archb = gtk.HBox()
+-    rxdhb.pack_start(gtk.Label("rxdsk volume: "), True, True, 0)
+-    rxdhb.pack_start(dd)
+-    archb.pack_start(gtk.Label("Input path/file name for archival: "), False, False, 0)
+-    archb.pack_start(entry)
+-    dialog.vbox.pack_start(rxdhb, False, False, 0)
+-    dialog.vbox.pack_start(archb, False, False, 0)
+-    dialog.show_all()
+-    result = dialog.run()
+-
+-    if result == gtk.RESPONSE_DELETE_EVENT:
+         dialog.destroy()
+-        return
+ 
+-    path = entry.get_text()
+-
+-    if dd.get_active() < 0:
+-      dialog.destroy()
+-      error_msg(self.window, ' There was no rxdsk volume selected. ')
+-      return
+-
+-    if len(path) == 0:
+-      dialog.destroy()
+-      error_msg(self.window, ' There was no path and file name specified. ')
+-      return
+-
+-    if path.isdigit() == True:
+-      dialog.destroy()
+-      error_msg(self.window, ' Not a valid path and file entry. ')
+-      return
+-
+-    cmd = 'rxadm --archive ' + dd.get_active_text() + ' ' + path
+-    msg = commands.getoutput(cmd)
+-    #TODO: check return
+-
+-    dialog.destroy()
+-
+-
+-  def restore_routine(self, widget, data=None):
+-    self.refresh_routine(None)
+-    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK, None)
+-    dialog.set_markup('Select a path/file name and rxdsk volume:')
+-    dd = gtk.combo_box_new_text()
+-    for line in self.mod:
+-      if line[1].find("rxd") != -1:
+-        dd.append_text(line[1])
+-    browse = gtk.Button("Browse...")
+-    browse.connect("clicked", self.browse_for_file, None)
+-    self.entry = gtk.Entry()
+-    self.entry.set_editable(False)
+-    rxdhb = gtk.HBox()
+-    archb = gtk.HBox()
+-    rxdhb.pack_start(gtk.Label("rxdsk volume: "), True, True, 0)
+-    rxdhb.pack_start(dd)
+-    archb.pack_start(gtk.Label("Input archive path/file name: "), False, False, 0)
+-    archb.pack_start(self.entry)
+-    archb.pack_start(browse)
+-    dialog.vbox.pack_start(archb, False, False, 0)
+-    dialog.vbox.pack_start(rxdhb, False, False, 0)
+-    dialog.show_all()
+-    result = dialog.run()
+-
+-    if result == gtk.RESPONSE_DELETE_EVENT:
++    def restore_routine(self, widget, data=None):
++        self.refresh_routine(None)
++        dialog = gtk.MessageDialog(
++            None,
++            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
++            gtk.MESSAGE_QUESTION,
++            gtk.BUTTONS_OK,
++            None)
++        dialog.set_markup('Select a path/file name and rxdsk volume:')
++        dd = gtk.combo_box_new_text()
++        for line in self.mod:
++            if line[1].find("rxd") != -1:
++                dd.append_text(line[1])
++        browse = gtk.Button("Browse...")
++        browse.connect("clicked", self.browse_for_file, None)
++        self.entry = gtk.Entry()
++        self.entry.set_editable(False)
++        rxdhb = gtk.HBox()
++        archb = gtk.HBox()
++        rxdhb.pack_start(gtk.Label("rxdsk volume: "), True, True, 0)
++        rxdhb.pack_start(dd)
++        archb.pack_start(
++            gtk.Label("Input archive path/file name: "),
++            False,
++            False,
++            0)
++        archb.pack_start(self.entry)
++        archb.pack_start(browse)
++        dialog.vbox.pack_start(archb, False, False, 0)
++        dialog.vbox.pack_start(rxdhb, False, False, 0)
++        dialog.show_all()
++        result = dialog.run()
++
++        if result == gtk.RESPONSE_DELETE_EVENT:
++            dialog.destroy()
++            return
++
++        path = self.entry.get_text()
++
++        if len(path) == 0:
++            dialog.destroy()
++            error_msg(
++                self.window,
++                ' There was no path and file name specified. ')
++            return
++
++        if path.isdigit():
++            dialog.destroy()
++            error_msg(self.window, ' Not a valid path and file entry. ')
++            return
++
++        if dd.get_active() < 0:
++            dialog.destroy()
++            error_msg(self.window, ' There was no rxdsk volume selected. ')
++            return
++
++        cmd = 'rxadm --restore ' + path + ' ' + dd.get_active_text()
++        msg = commands.getoutput(cmd)
++        # TODO: check return
++
+         dialog.destroy()
+-        return
+ 
+-    path = self.entry.get_text()
+-
+-    if len(path) == 0:
+-      dialog.destroy()
+-      error_msg(self.window, ' There was no path and file name specified. ')
+-      return
+-
+-    if path.isdigit() == True:
+-      dialog.destroy()
+-      error_msg(self.window, ' Not a valid path and file entry. ')
+-      return
+-
+-    if dd.get_active() < 0:
+-      dialog.destroy()
+-      error_msg(self.window, ' There was no rxdsk volume selected. ')
+-      return
+-
+-    cmd = 'rxadm --restore ' + path + ' ' + dd.get_active_text()
+-    msg = commands.getoutput(cmd)
+-    #TODO: check return
+-
+-    dialog.destroy()
+-
+-
+-  def remove_routine(self, widget, data=None):
+-    val = self.ls.get_selection().get_selected()
+-    if val[1] != None:
+-      valstr = val[0].get_value(val[1], 1)
+-      if valstr.find("rxd") != -1:
+-        cmd = 'rxadm --detach ' + valstr
+-      else:
+-        cmd = 'rxadm --rxc-unmap ' + valstr
+-
+-      msg = commands.getoutput(cmd)
+-
+-      if msg.find("mounted") != -1: 
+-        error_msg(self.window, ' This node is currently mounted. Please umount and retry. ')
+-      if msg.find("mapped") != -1: 
+-        error_msg(self.window, ' This node is currently in a mapping. Please unmap and retry. ')
+-
+-      self.refresh_routine(None)
+-    else:
+-      error_msg(self.window, ' Nothing is selected. Please make a selection and retry. ')
+-
+-
+-  #########
+-  ## __init__
+-  ## description: 
+-  def __init__(self):
+-    self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+-    self.window.set_position(gtk.WIN_POS_CENTER)
+-    self.window.set_border_width(0)
+-    self.window.set_resizable(False)
+-    self.window.set_size_request(500, 245)
+-    self.window.set_title("pyRxAdm 2.12")
+-    self.window.set_icon_from_file("/opt/rxadm/rxadm_logo_48x48.png")
+-    #self.window.set_icon_from_file("../misc/rxadm_logo_48x48.png")
+-
+-    ## creating containers ##
+-    vb = gtk.VBox(False, 2) # Main Body
+-    vb2 = gtk.VBox(True, 2)
+-    hb = gtk.HBox(False, 2)
+-    hb2 = gtk.HBox(False, 2)
+-    sw = gtk.ScrolledWindow()
+-    sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+-
+-    self.mod = gtk.ListStore(gobject.TYPE_INT, gobject.TYPE_STRING, gobject.TYPE_STRING)
+-    self.ls = gtk.TreeView(self.mod)
+-    re = gtk.CellRendererText()
+-
+-    col1 = gtk.TreeViewColumn(summary_list[0], re, text=0)
+-    col1.set_resizable(True)
+-    col1.set_min_width(50)
+-    self.ls.insert_column(col1, -1)
+-    col2 = gtk.TreeViewColumn(summary_list[1], re, text=1)
+-    col2.set_resizable(True)
+-    col2.set_min_width(80)
+-    self.ls.insert_column(col2, -1)
+-    col3 = gtk.TreeViewColumn(summary_list[2], re, text=2)
+-    col3.set_resizable(True)
+-    self.ls.insert_column(col3, -1)
+-
+-    sw.add(self.ls)
+-
+-    refresh = gtk.Button(None, gtk.STOCK_REFRESH)
+-    add = gtk.Button("Attach")
+-    mapp = gtk.Button("Map")
+-    archive = gtk.Button("Archive")
+-    restore = gtk.Button("Restore")
+-    remove = gtk.Button("Detach / Unmap")
+-    close = gtk.Button(None, gtk.STOCK_CLOSE)
+-    valign = gtk.Alignment(0, 1, 0, 0)
+-
+-    ## Packing containers ##
+-    vb2.pack_start(valign, True, True, 0)
+-    vb2.pack_start(add, True, True, 0)
+-    vb2.pack_start(mapp, True, True, 0)
+-    vb2.pack_start(archive, True, True, 0)
+-    vb2.pack_start(restore, True, True, 0)
+-    vb2.pack_start(remove, True, True, 0)
+-    vb2.pack_start(refresh, True, True, 0)
+-    vb2.pack_start(close, True, True, 0)
+-    hb.pack_start(vb2, False, False, 0)
+-    hb.pack_start(sw, True, True, 0)
+-    vb.pack_start(hb, False, False, 0)
+-
+-    ## connecting signals ##
+-    self.window.connect("destroy", self.destroy)
+-    self.window.connect("delete_event", self.delete_event)
+-
+-    refresh.connect_object("clicked", self.refresh_routine, None)
+-    add.connect_object("clicked", self.add_routine, None)
+-    mapp.connect_object("clicked", self.map_routine, None)
+-    remove.connect_object("clicked", self.remove_routine, None)
+-    archive.connect_object("clicked", self.archive_routine, None)
+-    restore.connect_object("clicked", self.restore_routine, None)
+-    close.connect_object("clicked", self.destroy, None)
+-
+-    self.window.add(vb)
+-    self.window.show_all()
+-
+-    ## Test to check UID. If not 0 it will not run. ##
+-    if os.getuid() != 0:
+-      error_msg(self.window, ' You must have superuser permissions to run this program. ')
+-      sys.exit(0)
+-
+-    if os.path.isfile('/proc/rxctl') != True:
+-      error_msg(self.window, ' The rxdsk module is not loaded. ')
+-      sys.exit(0)
+-    if os.path.isfile('/proc/rxc') != True:
+-      error_msg(self.window, ' The rxcache module is not loaded. ')
+-      sys.exit(0)
+-
+-  def main(self):
+-    gtk.main()
++    def remove_routine(self, widget, data=None):
++        val = self.ls.get_selection().get_selected()
++        if val[1] is not None:
++            valstr = val[0].get_value(val[1], 1)
++            if valstr.find("rxd") != -1:
++                cmd = 'rxadm --detach ' + valstr
++            else:
++                cmd = 'rxadm --rxc-unmap ' + valstr
++
++            msg = commands.getoutput(cmd)
++
++            if msg.find("mounted") != -1:
++                error_msg(
++                    self.window,
++                    ' This node is currently mounted. Please umount and retry. ')
++            if msg.find("mapped") != -1:
++                error_msg(
++                    self.window,
++                    ' This node is currently in a mapping. Please unmap and retry. ')
++
++            self.refresh_routine(None)
++        else:
++            error_msg(
++                self.window,
++                ' Nothing is selected. Please make a selection and retry. ')
++
++    #########
++    # __init__
++    # description:
++    def __init__(self):
++        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
++        self.window.set_position(gtk.WIN_POS_CENTER)
++        self.window.set_border_width(0)
++        self.window.set_resizable(False)
++        self.window.set_size_request(500, 245)
++        self.window.set_title("pyRxAdm 2.12")
++        import itertools
++        for logo_path in [os.path.join(*t) for t in itertools.product(
++                ['/usr', '/opt', os.path.join(os.path.dirname(__file__), '..')],
++                ['share/pixmaps', 'rxadm', 'misc'],
++                ['rxadm.png', 'rxadm_logo_48x48.png'])]:
++            if os.path.isfile(logo_path):
++                self.window.set_icon_from_file(logo_path)
++                break
++
++        ## creating containers ##
++        vb = gtk.VBox(False, 2)  # Main Body
++        vb2 = gtk.VBox(True, 2)
++        hb = gtk.HBox(False, 2)
++        hb2 = gtk.HBox(False, 2)
++        sw = gtk.ScrolledWindow()
++        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
++
++        self.mod = gtk.ListStore(
++            gobject.TYPE_INT,
++            gobject.TYPE_STRING,
++            gobject.TYPE_STRING)
++        self.ls = gtk.TreeView(self.mod)
++        re = gtk.CellRendererText()
++
++        col1 = gtk.TreeViewColumn(summary_list[0], re, text=0)
++        col1.set_resizable(True)
++        col1.set_min_width(50)
++        self.ls.insert_column(col1, -1)
++        col2 = gtk.TreeViewColumn(summary_list[1], re, text=1)
++        col2.set_resizable(True)
++        col2.set_min_width(80)
++        self.ls.insert_column(col2, -1)
++        col3 = gtk.TreeViewColumn(summary_list[2], re, text=2)
++        col3.set_resizable(True)
++        self.ls.insert_column(col3, -1)
++
++        sw.add(self.ls)
++
++        refresh = gtk.Button(None, gtk.STOCK_REFRESH)
++        add = gtk.Button("Attach")
++        mapp = gtk.Button("Map")
++        archive = gtk.Button("Archive")
++        restore = gtk.Button("Restore")
++        remove = gtk.Button("Detach / Unmap")
++        close = gtk.Button(None, gtk.STOCK_CLOSE)
++        valign = gtk.Alignment(0, 1, 0, 0)
++
++        ## Packing containers ##
++        vb2.pack_start(valign, True, True, 0)
++        vb2.pack_start(add, True, True, 0)
++        vb2.pack_start(mapp, True, True, 0)
++        vb2.pack_start(archive, True, True, 0)
++        vb2.pack_start(restore, True, True, 0)
++        vb2.pack_start(remove, True, True, 0)
++        vb2.pack_start(refresh, True, True, 0)
++        vb2.pack_start(close, True, True, 0)
++        hb.pack_start(vb2, False, False, 0)
++        hb.pack_start(sw, True, True, 0)
++        vb.pack_start(hb, False, False, 0)
++
++        ## connecting signals ##
++        self.window.connect("destroy", self.destroy)
++        self.window.connect("delete_event", self.delete_event)
++
++        refresh.connect_object("clicked", self.refresh_routine, None)
++        add.connect_object("clicked", self.add_routine, None)
++        mapp.connect_object("clicked", self.map_routine, None)
++        remove.connect_object("clicked", self.remove_routine, None)
++        archive.connect_object("clicked", self.archive_routine, None)
++        restore.connect_object("clicked", self.restore_routine, None)
++        close.connect_object("clicked", self.destroy, None)
++
++        self.window.add(vb)
++        self.window.show_all()
++
++        ## Test to check UID. If not 0 it will not run. ##
++        if os.getuid() != 0:
++            error_msg(
++                self.window,
++                ' You must have superuser permissions to run this program. ')
++            sys.exit(0)
++
++        if os.path.isfile('/proc/rxctl') != True:
++            error_msg(self.window, ' The rxdsk module is not loaded. ')
++            sys.exit(0)
++        if os.path.isfile('/proc/rxc') != True:
++            error_msg(self.window, ' The rxcache module is not loaded. ')
++            sys.exit(0)
++
++    def main(self):
++        gtk.main()
+ 
+ 
+ #####
+ # Main Routine
+ #
+ if __name__ == "__main__":
+-  rxadm = pyRxAdm()
+-  rxadm.main()
++    rxadm = pyRxAdm()
++    rxadm.main()
+-- 
+2.2.1
+
