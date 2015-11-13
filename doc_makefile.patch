@@ -1,0 +1,43 @@
+From a191c51454d55ad820226394aadc0813e147ef8e Mon Sep 17 00:00:00 2001
+From: Marcel Huber <marcelhuberfoo@gmail.com>
+Date: Fri, 13 Nov 2015 07:46:24 +0100
+Subject: refactor man dir (DRY)
+
+specify create mode for mkdir
+---
+ doc/Makefile | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git doc/Makefile doc/Makefile
+index 6ea3312..5dab5d4 100644
+--- doc/Makefile
++++ doc/Makefile
+@@ -1,6 +1,7 @@
+ CP := cp
+ RM := rm
+-MKDIR := mkdir -p
++MKDIR := mkdir -p -m 755
++MAN_DIR := /usr/share/man/man1
+ 
+ .PHONY: all
+ all: 
+@@ -9,13 +10,13 @@ all:
+ .PHONY: install
+ install: all
+ 	@echo Installing rapiddisk man page.
+-	$(MKDIR) $(DESTDIR)/usr/share/man/man1/
+-	$(CP) rapiddisk*.1 $(DESTDIR)/usr/share/man/man1/
++	$(MKDIR) $(DESTDIR)$(MAN_DIR)
++	$(CP) rapiddisk*.1 $(DESTDIR)$(MAN_DIR)/
+ 
+ .PHONY: uninstall
+ uninstall: 
+ 	@echo Uninstalling rapiddisk man page.
+-	$(RM) -f $(DESTDIR)/usr/share/man/man1/rapiddisk*.1
++	$(RM) -f $(DESTDIR)$(MAN_DIR)/rapiddisk*.1
+ 
+ .PHONY: clean
+ clean:
+-- 
+2.6.2
+

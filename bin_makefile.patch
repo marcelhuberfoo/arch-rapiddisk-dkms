@@ -1,0 +1,25 @@
+From c277979bd46c4596da6ec77b8c0981517bd4cd7c Mon Sep 17 00:00:00 2001
+From: Marcel Huber <marcelhuberfoo@gmail.com>
+Date: Fri, 13 Nov 2015 07:57:22 +0100
+Subject: corrected hard coded sbin path to $(DIR)
+
+---
+ bin/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git bin/Makefile bin/Makefile
+index 25fb8e5..33994f7 100755
+--- bin/Makefile
++++ bin/Makefile
+@@ -24,7 +24,7 @@ install: all
+ 	$(MKDIR) $(DESTDIR)$(DIR)
+ 	$(CP) $(BIN) $(DESTDIR)$(DIR)
+ 	$(CHMOD) 755 $(DESTDIR)$(DIR)/$(BIN)*
+-	ln -s $(BIN) $(DESTDIR)/sbin/rxadm
++	ln -s $(BIN) $(DESTDIR)$(DIR)/rxadm
+ 
+ .PHONY: uninstall
+ uninstall: 
+-- 
+2.6.2
+

@@ -2,51 +2,45 @@
 
 _pkgbase=rapiddisk
 pkgname=rapiddisk-dkms
-pkgver=2.12
-pkgrel=3
-pkgdesc="RapidDisk kernel modules (DKMS) and rxadm management utility"
+pkgver=3.5
+pkgrel=1
+pkgdesc="RapidDisk kernel modules (DKMS) and rapiddisk management utility"
 arch=('i686' 'x86_64')
 url="http://www.rapiddisk.org/"
 license=('GPL2')
 depends=('dkms')
 conflicts=("$_pkgbase")
 install=$pkgname.install
-source=($pkgname::git+http://git.rapiddisk.org/rxdsk-2.x.git
-        pyRxAdm.patch
-        cmd_makefile.patch
-        man_makefile.patch)
+source=($pkgname::git+http://git.rapiddisk.org/rxdsk-3.x.git
+        bin_makefile.patch
+        doc_makefile.patch)
 sha256sums=('SKIP'
-            'e1475b8800e279885598839655aa7fed89bb1ea6554ffa22faacccf93eb72866'
-            '358c28a32bffa278618858893e2ee64be1e09b7ff780b33f02f239edf8ece644'
-            '2cdcbf37926e9aa86e74424275ee66dd4eb84ef73cf2b9287bdf570d64addba9')
+            '9a79ca81d12ad6b67bb7db1836ad2c811a28103ab56945da95f384458b81c2e4'
+            '7d0b03846128e734b0265b047d2317852d1400d7e832dd4f1a3b9d880462ecda')
 
 prepare() {
   cd "$srcdir/$pkgname"
   # ensure correct name and version in dkms.conf
   sed -r -e "s/^(PACKAGE_NAME=).*$/\1\"${_pkgbase}\"/" \
       -e "s/^(PACKAGE_VERSION=).*$/\1\"${pkgver}\"/" \
-      -i "$srcdir/$pkgname"/dkms.conf
-  # modify icon location within python tool
-  patch --forward --strip=0 --input="$srcdir/pyRxAdm.patch"
-  sed -r -e "1 s|python$|python2|" \
-      -i "$srcdir/$pkgname"/cmd/pyRxAdm.py
-  patch --forward --strip=0 --input="$srcdir/man_makefile.patch"
-  patch --forward --strip=0 --input="$srcdir/cmd_makefile.patch"
+      -i "$srcdir/$pkgname"/module/dkms.conf
+  patch --forward --strip=0 --input="$srcdir/doc_makefile.patch"
+  patch --forward --strip=0 --input="$srcdir/bin_makefile.patch"
 }
 
 build() {
   cd "$srcdir/$pkgname"
-  # build rxadm utility
-  make SUBDIRS="cmd" all
+  # build rapiddisk utility
+  make SUBDIRS="bin" all
 }
 
 package() {
   # install man page
   cd "$srcdir/$pkgname"
-  make SUBDIRS="man" DESTDIR="$pkgdir" install
-  make SUBDIRS="cmd" DESTDIR="$pkgdir" BIN_DIR="/usr/bin" ADM_DIR="/usr/bin" LOGO_DIR="/usr/share/pixmaps" install
+  make SUBDIRS="doc" DESTDIR="$pkgdir" install
+  make SUBDIRS="bin" DESTDIR="$pkgdir" DIR="/usr/bin" install
   # copy kernel module source files for dkms use
-  install -Dm644 "$srcdir/$pkgname"/dkms.conf "$pkgdir/usr/src/${_pkgbase}-${pkgver}/dkms.conf"
+  install -Dm644 "$srcdir/$pkgname"/module/dkms.conf "$pkgdir/usr/src/${_pkgbase}-${pkgver}/dkms.conf"
   mkdir -p "$pkgdir/usr/src/${_pkgbase}-${pkgver}/"
-  install -Dm644 "$srcdir/$pkgname/module/drivers/block"/* "$pkgdir/usr/src/${_pkgbase}-${pkgver}/"
+  install -Dm644 "$srcdir/$pkgname/module/"/* "$pkgdir/usr/src/${_pkgbase}-${pkgver}/"
 }
