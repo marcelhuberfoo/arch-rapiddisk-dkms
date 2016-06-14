@@ -2,7 +2,7 @@
 
 _pkgbase=rapiddisk
 pkgname=rapiddisk-dkms
-pkgver=3.5
+pkgver=3.7
 pkgrel=1
 pkgdesc="RapidDisk kernel modules (DKMS) and rapiddisk management utility"
 arch=('i686' 'x86_64')
@@ -12,7 +12,7 @@ depends=('dkms')
 conflicts=("$_pkgbase")
 install=$pkgname.install
 source=($pkgname::git+http://git.rapiddisk.org/rxdsk-3.x.git
-        bin_makefile.patch
+        src_makefile.patch
         doc_makefile.patch)
 sha256sums=('SKIP'
             '9a79ca81d12ad6b67bb7db1836ad2c811a28103ab56945da95f384458b81c2e4'
@@ -25,20 +25,20 @@ prepare() {
       -e "s/^(PACKAGE_VERSION=).*$/\1\"${pkgver}\"/" \
       -i "$srcdir/$pkgname"/module/dkms.conf
   patch --forward --strip=0 --input="$srcdir/doc_makefile.patch"
-  patch --forward --strip=0 --input="$srcdir/bin_makefile.patch"
+  patch --forward --strip=0 --input="$srcdir/src_makefile.patch"
 }
 
 build() {
   cd "$srcdir/$pkgname"
   # build rapiddisk utility
-  make SUBDIRS="bin" all
+  make SUBDIRS="src" all
 }
 
 package() {
   # install man page
   cd "$srcdir/$pkgname"
   make SUBDIRS="doc" DESTDIR="$pkgdir" install
-  make SUBDIRS="bin" DESTDIR="$pkgdir" DIR="/usr/bin" install
+  make SUBDIRS="src" DESTDIR="$pkgdir" DIR="/usr/bin" install
   # copy kernel module source files for dkms use
   install -Dm644 "$srcdir/$pkgname"/module/dkms.conf "$pkgdir/usr/src/${_pkgbase}-${pkgver}/dkms.conf"
   mkdir -p "$pkgdir/usr/src/${_pkgbase}-${pkgver}/"
