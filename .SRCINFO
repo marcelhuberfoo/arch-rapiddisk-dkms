@@ -1,0 +1,22 @@
+pkgbase = rapiddisk-dkms
+	pkgdesc = RapidDisk kernel modules (DKMS) and rapiddisk management utility
+	pkgver = 4.2
+	pkgrel = 2
+	url = http://www.rapiddisk.org/
+	install = rapiddisk-dkms.install
+	arch = i686
+	arch = x86_64
+	license = GPL2
+	depends = dkms
+	conflicts = rapiddisk
+	source = rapiddisk-dkms::git+http://git.rapiddisk.org/rapiddisk-4.x.git
+	source = src_makefile.patch
+	source = doc_makefile.patch
+	source = module_flush_cache.patch
+	sha256sums = SKIP
+	sha256sums = 0c3bd26638203e5177564f87949dbadc96cdf8e6cf79a7bb2a5dc0bf6ea99f79
+	sha256sums = 116d3d9f71234cba9dce3cbbee94df0c717f087e0434c38309cb42b1dca9de88
+	sha256sums = ffca1971e58220b7d3e7b3a8a8d287a81f7fd32c74dd28a3bfe582513e3e0860
+
+pkgname = rapiddisk-dkms
+
