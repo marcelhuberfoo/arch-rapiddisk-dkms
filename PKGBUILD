@@ -3,7 +3,7 @@
 _pkgbase=rapiddisk
 pkgname=rapiddisk-dkms
 pkgver=4.2
-pkgrel=2
+pkgrel=3
 pkgdesc="RapidDisk kernel modules (DKMS) and rapiddisk management utility"
 arch=('i686' 'x86_64')
 url="http://www.rapiddisk.org/"
@@ -26,8 +26,13 @@ prepare() {
   sed -r -e "s/^(PACKAGE_NAME=).*$/\1\"${_pkgbase}\"/" \
       -e "s/^(PACKAGE_VERSION=).*$/\1\"${pkgver}\"/" \
       -i "$srcdir/$pkgname"/module/dkms.conf
-  patch --forward --strip=0 --input="$srcdir/doc_makefile.patch"
-  patch --forward --strip=0 --input="$srcdir/src_makefile.patch"
+
+  for filename in "${source[@]}"; do
+    if [[ "$filename" =~ \.patch$ ]]; then
+      msg2 "Applying patch $filename"
+      patch --forward --strip=0 --input="$srcdir/$filename"
+    fi
+  done
 }
 
 build() {

@@ -1,7 +1,7 @@
 pkgbase = rapiddisk-dkms
 	pkgdesc = RapidDisk kernel modules (DKMS) and rapiddisk management utility
 	pkgver = 4.2
-	pkgrel = 2
+	pkgrel = 3
 	url = http://www.rapiddisk.org/
 	install = rapiddisk-dkms.install
 	arch = i686
