@@ -11,7 +11,7 @@ license=('GPL2')
 depends=('dkms')
 conflicts=("$_pkgbase")
 install=$pkgname.install
-source=($pkgname::git+http://git.rapiddisk.org/rapiddisk-4.x.git
+source=($pkgname::git+https://github.com/pkoutoupis/rapiddisk.git
         src_makefile.patch
         doc_makefile.patch)
 sha256sums=('SKIP'
