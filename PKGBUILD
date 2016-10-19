@@ -15,7 +15,7 @@ source=($pkgname::git+https://github.com/pkoutoupis/rapiddisk.git
         src_makefile.patch
         doc_makefile.patch)
 sha256sums=('SKIP'
-            '0c3bd26638203e5177564f87949dbadc96cdf8e6cf79a7bb2a5dc0bf6ea99f79'
+            '82dce1fa13d88ca76c461ec6169b7c956f7297b19e11b8b849d1de0bcfdf23dd'
             '116d3d9f71234cba9dce3cbbee94df0c717f087e0434c38309cb42b1dca9de88')
 
 prepare() {

@@ -1,17 +1,26 @@
-From ee9bcded01222124cce92e7bfabad0d4e24b953b Mon Sep 17 00:00:00 2001
+From 01d7a18d6c06659fe67c5bfe18ea3a275d493360 Mon Sep 17 00:00:00 2001
 From: Marcel Huber <marcelhuberfoo@gmail.com>
-Date: Tue, 14 Jun 2016 22:21:03 +0200
+Date: Wed, 19 Oct 2016 22:52:31 +0200
 Subject: corrected hard coded sbin path to $(DIR)
 
 ---
- src/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ src/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git src/Makefile src/Makefile
-index e26a74f..70738dd 100755
+index 6827b6a..10cad6e 100755
 --- src/Makefile
 +++ src/Makefile
-@@ -20,7 +20,7 @@ install: all
+@@ -30,7 +30,7 @@ install: all
+ 	$(MKDIR) $(DESTDIR)$(DIR)
+ 	$(CP) $(BIN) $(DESTDIR)$(DIR)
+ 	$(CHMOD) 755 $(DESTDIR)$(DIR)/$(BIN)*
+-	ln -s $(BIN) $(DESTDIR)/sbin/rxadm
++	ln -s $(BIN) $(DESTDIR)$(DIR)/rxadm
+ 
+ .PHONY: nocrypt-install
+ nocrypt-install: nocrypt
+@@ -38,7 +38,7 @@ nocrypt-install: nocrypt
  	$(MKDIR) $(DESTDIR)$(DIR)
  	$(CP) $(BIN) $(DESTDIR)$(DIR)
  	$(CHMOD) 755 $(DESTDIR)$(DIR)/$(BIN)*
@@ -21,5 +30,5 @@ index e26a74f..70738dd 100755
  .PHONY: uninstall
  uninstall:
 -- 
-2.8.3
+2.10.0
 
