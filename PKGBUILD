@@ -2,8 +2,8 @@
 
 _pkgbase=rapiddisk
 pkgname=rapiddisk-dkms
-pkgver=4.2
-pkgrel=3
+pkgver=4.3
+pkgrel=1
 pkgdesc="RapidDisk kernel modules (DKMS) and rapiddisk management utility"
 arch=('i686' 'x86_64')
 url="http://www.rapiddisk.org/"
@@ -13,12 +13,10 @@ conflicts=("$_pkgbase")
 install=$pkgname.install
 source=($pkgname::git+http://git.rapiddisk.org/rapiddisk-4.x.git
         src_makefile.patch
-        doc_makefile.patch
-        module_flush_cache.patch)
+        doc_makefile.patch)
 sha256sums=('SKIP'
             '0c3bd26638203e5177564f87949dbadc96cdf8e6cf79a7bb2a5dc0bf6ea99f79'
-            '116d3d9f71234cba9dce3cbbee94df0c717f087e0434c38309cb42b1dca9de88'
-            'ffca1971e58220b7d3e7b3a8a8d287a81f7fd32c74dd28a3bfe582513e3e0860')
+            '116d3d9f71234cba9dce3cbbee94df0c717f087e0434c38309cb42b1dca9de88')
 
 prepare() {
   cd "$srcdir/$pkgname"
