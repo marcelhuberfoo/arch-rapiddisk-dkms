@@ -11,12 +11,8 @@ license=('GPL2')
 depends=('dkms')
 conflicts=("$_pkgbase")
 install=$pkgname.install
-source=($pkgname::git+https://github.com/pkoutoupis/rapiddisk.git
-        src_makefile.patch
-        doc_makefile.patch)
-sha256sums=('SKIP'
-            '82dce1fa13d88ca76c461ec6169b7c956f7297b19e11b8b849d1de0bcfdf23dd'
-            '116d3d9f71234cba9dce3cbbee94df0c717f087e0434c38309cb42b1dca9de88')
+source=($pkgname::git+https://github.com/marcelhuberfoo/rapiddisk.git)
+sha256sums=('SKIP')
 
 prepare() {
   cd "$srcdir/$pkgname"
