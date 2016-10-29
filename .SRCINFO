@@ -1,6 +1,6 @@
 pkgbase = rapiddisk-dkms
 	pkgdesc = RapidDisk kernel modules (DKMS) and rapiddisk management utility
-	pkgver = 4.3
+	pkgver = 4.4
 	pkgrel = 1
 	url = http://www.rapiddisk.org/
 	install = rapiddisk-dkms.install
@@ -9,7 +9,7 @@ pkgbase = rapiddisk-dkms
 	license = GPL2
 	depends = dkms
 	conflicts = rapiddisk
-	source = rapiddisk-dkms::git+https://github.com/marcelhuberfoo/rapiddisk.git
+	source = rapiddisk-dkms::git+https://github.com/pkoutoupis/rapiddisk.git
 	sha256sums = SKIP
 
 pkgname = rapiddisk-dkms

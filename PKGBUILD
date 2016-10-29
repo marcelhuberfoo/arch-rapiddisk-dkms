@@ -2,7 +2,7 @@
 
 _pkgbase=rapiddisk
 pkgname=rapiddisk-dkms
-pkgver=4.3
+pkgver=4.4
 pkgrel=1
 pkgdesc="RapidDisk kernel modules (DKMS) and rapiddisk management utility"
 arch=('i686' 'x86_64')
@@ -11,7 +11,7 @@ license=('GPL2')
 depends=('dkms')
 conflicts=("$_pkgbase")
 install=$pkgname.install
-source=($pkgname::git+https://github.com/marcelhuberfoo/rapiddisk.git)
+source=($pkgname::git+https://github.com/pkoutoupis/rapiddisk.git)
 sha256sums=('SKIP')
 
 prepare() {
