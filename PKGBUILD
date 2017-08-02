@@ -3,7 +3,7 @@
 _pkgbase=rapiddisk
 pkgname=rapiddisk-dkms
 pkgver=5.0
-pkgrel=2
+pkgrel=3
 pkgdesc="RapidDisk kernel modules (DKMS) and rapiddisk management utility"
 arch=('i686' 'x86_64')
 url="http://www.rapiddisk.org/"
@@ -11,8 +11,10 @@ license=('GPL2')
 depends=('dkms' 'jansson')
 conflicts=("$_pkgbase")
 install=$pkgname.install
-source=($pkgname::git+https://github.com/pkoutoupis/rapiddisk.git)
-sha256sums=('SKIP')
+source=($pkgname::git+https://github.com/pkoutoupis/rapiddisk.git
+        discard_zeroes_data.patch)
+sha256sums=('SKIP'
+            '4e4cb960e7c4a4e27a330942dffad6b5618acc254cce15b9dbe765d6e2846b78')
 
 prepare() {
   cd "$srcdir/$pkgname"
