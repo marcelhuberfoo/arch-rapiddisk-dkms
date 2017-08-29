@@ -1,7 +1,7 @@
 pkgbase = rapiddisk-dkms
 	pkgdesc = RapidDisk kernel modules (DKMS) and rapiddisk management utility
 	pkgver = 5.0
-	pkgrel = 3
+	pkgrel = 4
 	url = http://www.rapiddisk.org/
 	install = rapiddisk-dkms.install
 	arch = i686
@@ -12,8 +12,10 @@ pkgbase = rapiddisk-dkms
 	conflicts = rapiddisk
 	source = rapiddisk-dkms::git+https://github.com/pkoutoupis/rapiddisk.git
 	source = discard_zeroes_data.patch
+	source = comparison_between_pointer_and_zero_character_constant.patch
 	sha256sums = SKIP
-	sha256sums = 4e4cb960e7c4a4e27a330942dffad6b5618acc254cce15b9dbe765d6e2846b78
+	sha256sums = 8f88a031f1616cc2d7f797ae95dec1690c5bf1702afbaebe6760ec166bcf380b
+	sha256sums = ae4c555eb692210bcd083530a411affd1da8afc87fca17a61f2e13d0111b17df
 
 pkgname = rapiddisk-dkms
 
