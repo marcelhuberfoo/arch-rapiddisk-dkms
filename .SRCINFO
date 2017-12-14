@@ -1,6 +1,6 @@
 pkgbase = rapiddisk-dkms
 	pkgdesc = RapidDisk kernel modules (DKMS) and rapiddisk management utility
-	pkgver = 5.1
+	pkgver = 5.1.r1.g89aad9e
 	pkgrel = 1
 	url = http://www.rapiddisk.org/
 	install = rapiddisk-dkms.install

@@ -2,7 +2,7 @@
 
 _pkgbase=rapiddisk
 pkgname=rapiddisk-dkms
-pkgver=5.1
+pkgver=5.1.r1.g89aad9e
 pkgrel=1
 pkgdesc="RapidDisk kernel modules (DKMS) and rapiddisk management utility"
 arch=('i686' 'x86_64')
@@ -14,6 +14,15 @@ install=$pkgname.install
 source=($pkgname::git+https://github.com/pkoutoupis/rapiddisk.git
 	)
 sha256sums=('SKIP')
+
+pkgver() {
+  cd "$pkgname"
+  if GITTAG="$(git describe --abbrev=0 --tags 2>/dev/null)"; then
+    echo "$(sed -e "s/^${pkgname%%-git}//" -e 's/^[-_/a-zA-Z]\+//' -e 's/[-_+]/./g' <<< ${GITTAG}).r$(git rev-list --count ${GITTAG}..).g$(git log -1 --format="%h")"
+  else
+    echo "0.r$(git rev-list --count master).g$(git log -1 --format="%h")"
+  fi
+}
 
 prepare() {
   cd "$srcdir/$pkgname"
