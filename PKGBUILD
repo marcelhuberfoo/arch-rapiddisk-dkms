@@ -2,7 +2,7 @@
 
 _pkgbase=rapiddisk
 pkgname=rapiddisk-dkms
-pkgver=5.2.2.gb7a05f1
+pkgver=5.2.7.g08be5d8
 pkgrel=1
 pkgdesc="RapidDisk kernel modules (DKMS) and rapiddisk management utility"
 arch=('i686' 'x86_64')
